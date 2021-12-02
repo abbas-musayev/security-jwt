@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -16,6 +17,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepo repo;
 
+    @PostConstruct
+    public void init(){
+        repo.save(new UserMY(1,"abbas","123456","abbas@mail.ru"));
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserMY userMY = repo.findByUsername(username)
