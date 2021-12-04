@@ -1,4 +1,4 @@
-package az.javatechie.techiesecurity.services;
+package az.javatechie.techiesecurity.auth;
 
 import az.javatechie.techiesecurity.entity.UserMY;
 import az.javatechie.techiesecurity.repositories.UserRepo;
@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,9 +18,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepo repo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostConstruct
     public void init(){
-        repo.save(new UserMY(1,"abbas","123456","abbas@mail.ru"));
+        repo.save(new UserMY(1,
+                "abbas",
+                passwordEncoder.encode("123456"),
+                "abbas@mail.ru"));
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

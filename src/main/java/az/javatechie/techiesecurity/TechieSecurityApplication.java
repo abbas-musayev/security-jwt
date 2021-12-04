@@ -14,19 +14,19 @@ import java.util.stream.Stream;
 @SpringBootApplication
 public class TechieSecurityApplication {
 
-//	@Autowired
-//	private UserRepo userRepo;
-//
-//	@PostConstruct
-//	public void initUsers(){
-//		List<UserMY> userMYStream = Stream.of(
-//				new UserMY(1, "Abbas", "qwe123", "abbas@gmail.com"),
-//				new UserMY(2, "Resul", "qwe123", "resul@gmail.com"),
-//				new UserMY(3, "Kamran", "qwe123", "kamran@gmail.com")
-//		).collect(Collectors.toList());
-//
-//		userRepo.saveAll(userMYStream);
-//	}
+	@Autowired
+	private UserRepo userRepo;
+
+	@PostConstruct
+	public void initUsers(){
+		List<UserMY> userMYStream = Stream.of(
+				new UserMY(1, "Abbas", "qwe123", "abbas@gmail.com"),
+				new UserMY(2, "Resul", "qwe123", "resul@gmail.com"),
+				new UserMY(3, "Kamran", "qwe123", "kamran@gmail.com")
+		).collect(Collectors.toList());
+
+		userRepo.saveAll(userMYStream);
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(TechieSecurityApplication.class, args);

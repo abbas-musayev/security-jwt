@@ -80,6 +80,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+
 				<configuration>
 					<excludes>
 						<exclude>
@@ -87,8 +88,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-				</configuration>
-			</plugin>
+				</configuration>	</plugin>
 		</plugins>
 	</build>
 
