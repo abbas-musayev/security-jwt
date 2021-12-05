@@ -38,6 +38,8 @@ public class UserController {
     public List<UserMy> getAll(){
         return userDetailsService.findAll();
     }
+
+
     @GetMapping("/getbyid")
     public List<UserMy> getById(@RequestParam Long id){
         List<UserMy> all = userDetailsService.findAll();

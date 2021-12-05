@@ -62,11 +62,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (tokenManager.tokenValidate(token)) {
                 log.info("----------Username Not Null-----------");
 
-                UsernamePasswordAuthenticationToken authentication = tokenManager.getAuthentication(token, SecurityContextHolder.getContext().getAuthentication(), userDetails);
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(username,
-//                                SecurityContextHolder.getContext().getAuthentication(),
-//                                Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+                UsernamePasswordAuthenticationToken authentication =
+                        tokenManager.getAuthentication(token, SecurityContextHolder.getContext().getAuthentication(), userDetails);
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
