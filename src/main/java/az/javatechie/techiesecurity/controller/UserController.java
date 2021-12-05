@@ -3,9 +3,11 @@ package az.javatechie.techiesecurity.controller;
 import az.javatechie.techiesecurity.auth.CustomUserDetailsService;
 import az.javatechie.techiesecurity.entity.UserMy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -36,4 +38,13 @@ public class UserController {
     public List<UserMy> getAll(){
         return userDetailsService.findAll();
     }
+    @GetMapping("/getbyid")
+    public List<UserMy> getById(@RequestParam Long id){
+        List<UserMy> all = userDetailsService.findAll();
+        List<UserMy> collect = all.stream()
+                .filter((item) -> item.getId().equals(id))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
 }
