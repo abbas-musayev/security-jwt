@@ -1,4 +1,4 @@
-package az.javatechie.techiesecurity;
+package az.javatechie.techiesecurity.auth;
 
 import az.javatechie.techiesecurity.auth.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +45,12 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/login").permitAll()
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/db").permitAll()
+                .antMatchers("/user").hasRole("USER")
+                .antMatchers("/admin").hasRole("ABBAS")
+                .antMatchers("/all").hasRole("NOVRUZ")
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

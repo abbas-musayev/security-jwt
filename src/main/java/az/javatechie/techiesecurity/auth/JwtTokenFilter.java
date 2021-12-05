@@ -1,8 +1,13 @@
 package az.javatechie.techiesecurity.auth;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,46 +18,61 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 @Component
+@Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenManager tokenManager;
 
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest,
-                                    HttpServletResponse httpServletResponse,
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         /**
          * "Bearer 123hab2355"
          */
-        final String authHeader = httpServletRequest.getHeader("Authorization");
+        log.info("--------DoFilterInternal---------");
+        final String authHeader = req.getHeader("Authorization");
 
         String username = null;
         String token = null;
-
 
         if (authHeader != null && authHeader.contains("Bearer")) {
             token = authHeader.substring(7);
             try {
                 username = tokenManager.getUsernameToken(token);
+                log.info("--------DoFilterInterna-> tokenManager.getUsernameToken "+username+"---------");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
 
-        if (username != null && token != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
             if (tokenManager.tokenValidate(token)) {
-                UsernamePasswordAuthenticationToken upassToken =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-                upassToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                SecurityContextHolder.getContext().setAuthentication(upassToken);
+                log.info("----------Username Not Null-----------");
+
+                UsernamePasswordAuthenticationToken authentication = tokenManager.getAuthentication(token, SecurityContextHolder.getContext().getAuthentication(), userDetails);
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(username,
+//                                SecurityContextHolder.getContext().getAuthentication(),
+//                                Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+        filterChain.doFilter(req, res);
 
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
